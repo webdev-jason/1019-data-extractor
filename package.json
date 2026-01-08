@@ -1,0 +1,14 @@
+{
+  "name": "data-extractor-1019",
+  "version": "1.0.0",
+  "description": "Extracts and averages Ra, Rz, and Rmr from text files",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Jason Sparks",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^33.0.0"
+  }
+}

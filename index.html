@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roughness Data Extractor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Surface Roughness Average</h1>
+        <p>Select your .txt files to calculate the average Ra, Rz, and Rmr.</p>
+
+        <div class="button-group">
+            <button id="uploadBtn">📂 Select Files</button>
+            <span id="fileCount">No files selected</span>
+        </div>
+
+        <button id="analyzeBtn" disabled>Run Analysis</button>
+
+        <div class="results-area">
+            <div class="result-card">
+                <h3>Ra (µm)</h3>
+                <div class="value-box" id="val-ra">-</div>
+            </div>
+
+            <div class="result-card">
+                <h3>Rz (µm)</h3>
+                <div class="value-box" id="val-rz">-</div>
+            </div>
+
+            <div class="result-card">
+                <h3>Rmr (%)</h3>
+                <div class="value-box" id="val-rmr">-</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

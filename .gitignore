@@ -1,0 +1,13 @@
+# Dependency directories
+node_modules/
+
+# Python compiled files
+__pycache__/
+*.py[cod]
+
+# System files
+.DS_Store
+Thumbs.db
+
+# VS Code settings (optional, but good practice if you have specific user settings)
+.vscode/
