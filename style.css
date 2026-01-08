@@ -4,6 +4,7 @@
     --primary: #007bff;
     --primary-hover: #0056b3;
     --text-dark: #333;
+    --success: #28a745;
 }
 
 body {
@@ -21,7 +22,7 @@ body {
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    width: 500px;
+    width: 650px; /* Made slightly wider for the extra column */
     text-align: center;
 }
 
@@ -38,7 +39,8 @@ h1 {
     gap: 15px;
 }
 
-button {
+/* Main Buttons (Select / Analyze) */
+button:not(.icon-btn) {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
@@ -49,7 +51,7 @@ button {
     transition: background 0.3s;
 }
 
-button:hover {
+button:not(.icon-btn):hover {
     background-color: var(--primary-hover);
 }
 
@@ -63,33 +65,76 @@ button:disabled {
     color: #666;
 }
 
-.results-area {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* 3 Equal Columns */
-    gap: 10px;
+/* Table Styling */
+.table-container {
     margin-top: 30px;
+    display: flex;
+    justify-content: center;
 }
 
-.result-card {
-    background: #f8f9fa;
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 1.2rem;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: #666;
+    padding: 10px;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+td {
+    border: 1px solid #ddd;
     padding: 10px;
-}
-
-.result-card h3 {
-    margin: 0 0 10px 0;
-    font-size: 1rem;
-    color: #555;
-}
-
-.value-box {
-    font-size: 1.5rem;
-    font-weight: bold;
     color: #222;
-    padding: 10px;
-    background: white;
-    border: 1px solid #eee;
+    font-weight: bold;
+    font-family: 'Consolas', monospace;
+    vertical-align: middle;
+}
+
+/* Specific styling for the Action column */
+.action-col {
+    width: 100px;
+    background-color: #fff;
+}
+
+/* Copy Icon Button Styling */
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    padding: 5px;
     border-radius: 4px;
-    user-select: all; /* Allows easy copy-paste */
+    transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+    background-color: #f0f0f0;
+    color: var(--primary);
+}
+
+.icon-btn:active {
+    transform: scale(0.95);
+}
+
+.icon-btn svg {
+    margin-bottom: 4px;
+}
+
+.btn-text {
+    font-size: 0.7rem;
+    font-family: 'Segoe UI', sans-serif; /* Reset font for text */
+}
+
+/* Animation class for when copy is successful */
+.copied {
+    color: var(--success) !important;
 }

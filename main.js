@@ -5,18 +5,25 @@ const { spawn } = require('child_process');
 let mainWindow;
 
 function createWindow() {
+  // Debug: Print where Electron is looking for the preload file
+  const preloadPath = path.join(__dirname, 'preload.js');
+  console.log("Loading preload script from:", preloadPath);
+
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      // Preload script is the security guard. It controls what the website can access.
-      preload: path.join(__dirname, 'preload.js'),
+      preload: preloadPath,
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      sandbox: false  // <--- THIS IS THE KEY FIX
     }
   });
 
   mainWindow.loadFile('index.html');
+  
+  // Open the DevTools automatically so we can see if it works
+  // mainWindow.webContents.openDevTools(); 
 }
 
 app.whenReady().then(() => {
@@ -32,7 +39,6 @@ app.on('window-all-closed', function () {
 });
 
 // --- IPC HANDLERS ---
-// These are the "events" we listen for from the frontend (the web page)
 
 // 1. Listen for "open-file-dialog"
 ipcMain.handle('dialog:openFile', async () => {
@@ -55,12 +61,11 @@ ipcMain.handle('dialog:openFile', async () => {
 ipcMain.handle('run-analysis', async (event, filePaths) => {
   return new Promise((resolve, reject) => {
     // This spawns a new Python process
-    // 'python' is the command, ['calc.py', ...filePaths] are the arguments
+    console.log("Running Python on files:", filePaths);
     const pythonProcess = spawn('python', ['calc.py', ...filePaths]);
 
     let resultData = '';
 
-    // Collect data printed by Python
     pythonProcess.stdout.on('data', (data) => {
       resultData += data.toString();
     });
@@ -70,12 +75,13 @@ ipcMain.handle('run-analysis', async (event, filePaths) => {
     });
 
     pythonProcess.on('close', (code) => {
+      console.log(`Python exited with code ${code}`);
       if (code === 0) {
         try {
-          // Parse the JSON string received from Python back into a JavaScript Object
           const jsonResponse = JSON.parse(resultData);
           resolve(jsonResponse);
         } catch (e) {
+          console.error("JSON Parse Error:", e, "Raw Data:", resultData);
           reject("Failed to parse Python response");
         }
       } else {
