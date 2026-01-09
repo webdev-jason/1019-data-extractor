@@ -5,9 +5,7 @@ const { spawn } = require('child_process');
 let mainWindow;
 
 function createWindow() {
-  // Debug: Print where Electron is looking for the preload file
   const preloadPath = path.join(__dirname, 'preload.js');
-  console.log("Loading preload script from:", preloadPath);
 
   mainWindow = new BrowserWindow({
     width: 800,
@@ -16,14 +14,11 @@ function createWindow() {
       preload: preloadPath,
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: false  // <--- THIS IS THE KEY FIX
+      sandbox: false 
     }
   });
 
   mainWindow.loadFile('index.html');
-  
-  // Open the DevTools automatically so we can see if it works
-  // mainWindow.webContents.openDevTools(); 
 }
 
 app.whenReady().then(() => {
@@ -40,7 +35,6 @@ app.on('window-all-closed', function () {
 
 // --- IPC HANDLERS ---
 
-// 1. Listen for "open-file-dialog"
 ipcMain.handle('dialog:openFile', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ['openFile', 'multiSelections'],
@@ -57,35 +51,50 @@ ipcMain.handle('dialog:openFile', async () => {
   }
 });
 
-// 2. Listen for "run-analysis"
 ipcMain.handle('run-analysis', async (event, filePaths) => {
   return new Promise((resolve, reject) => {
-    // This spawns a new Python process
-    console.log("Running Python on files:", filePaths);
-    const pythonProcess = spawn('python', ['calc.py', ...filePaths]);
+    
+    // --- PATH CONFIGURATION ---
+    // We are now looking for 'calc.exe', not 'calc.py'
+    let scriptPath = path.join(__dirname, 'calc.exe');
+    
+    // Fix path for production (unpacked folder)
+    if (app.isPackaged) {
+        scriptPath = scriptPath.replace('app.asar', 'app.asar.unpacked');
+    }
+
+    console.log("Looking for executable at:", scriptPath);
+    // -------------------------------
+
+    console.log("Running analysis on files:", filePaths);
+    
+    // SPAWN CHANGE: 
+    // Instead of spawn('python', ['script.py', args]),
+    // We run the exe directly: spawn('path/to/exe', [args])
+    const childProcess = spawn(scriptPath, filePaths);
 
     let resultData = '';
 
-    pythonProcess.stdout.on('data', (data) => {
+    childProcess.stdout.on('data', (data) => {
       resultData += data.toString();
     });
 
-    pythonProcess.stderr.on('data', (data) => {
-      console.error(`Python Error: ${data}`);
+    childProcess.stderr.on('data', (data) => {
+      console.error(`Calc Error: ${data}`);
     });
 
-    pythonProcess.on('close', (code) => {
-      console.log(`Python exited with code ${code}`);
+    childProcess.on('close', (code) => {
+      console.log(`Process exited with code ${code}`);
       if (code === 0) {
         try {
           const jsonResponse = JSON.parse(resultData);
           resolve(jsonResponse);
         } catch (e) {
           console.error("JSON Parse Error:", e, "Raw Data:", resultData);
-          reject("Failed to parse Python response");
+          reject("Failed to parse response");
         }
       } else {
-        reject(`Python script exited with code ${code}`);
+        reject(`Calculation process exited with code ${code}`);
       }
     });
   });

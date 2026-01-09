@@ -11,3 +11,4 @@ Thumbs.db
 
 # VS Code settings (optional, but good practice if you have specific user settings)
 .vscode/
+out/
