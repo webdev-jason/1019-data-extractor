@@ -23,6 +23,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
+        "icon": "./icon",
         "asar": {
           "unpack": "calc.exe"
         }
@@ -32,7 +33,7 @@
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "ProfilometerDataExtractor",
-            "setupIcon": "", 
+            "setupIcon": "icon.ico",
             "setupExe": "ProfilometerDataExtractor.exe"
           }
         },

@@ -10,6 +10,8 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    // NEW: Load the icon in the top-left corner of the window
+    icon: path.join(__dirname, 'icon.ico'), 
     webPreferences: {
       preload: preloadPath,
       contextIsolation: true,
@@ -55,7 +57,6 @@ ipcMain.handle('run-analysis', async (event, filePaths) => {
   return new Promise((resolve, reject) => {
     
     // --- PATH CONFIGURATION ---
-    // We are now looking for 'calc.exe', not 'calc.py'
     let scriptPath = path.join(__dirname, 'calc.exe');
     
     // Fix path for production (unpacked folder)
@@ -68,9 +69,6 @@ ipcMain.handle('run-analysis', async (event, filePaths) => {
 
     console.log("Running analysis on files:", filePaths);
     
-    // SPAWN CHANGE: 
-    // Instead of spawn('python', ['script.py', args]),
-    // We run the exe directly: spawn('path/to/exe', [args])
     const childProcess = spawn(scriptPath, filePaths);
 
     let resultData = '';
