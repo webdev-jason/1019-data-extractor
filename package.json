@@ -18,7 +18,7 @@
     "electron": "^28.0.0"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "electron-squirrel-startup": "^1.0.0"
   },
   "config": {
     "forge": {
@@ -31,9 +31,9 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "DataExtractor1019",
-            "setupIcon": "",
-            "setupExe": "DataExtractorSetup.exe"
+            "name": "ProfilometerDataExtractor",
+            "setupIcon": "", 
+            "setupExe": "ProfilometerDataExtractor.exe"
           }
         },
         {
