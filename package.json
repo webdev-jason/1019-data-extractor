@@ -8,7 +8,7 @@
     "make": "electron-forge make"
   },
   "author": "Jason Sparks",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^7.2.0",
     "@electron-forge/maker-deb": "^7.2.0",
@@ -33,8 +33,10 @@
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "ProfilometerDataExtractor",
-            "setupIcon": "icon.ico",
-            "setupExe": "ProfilometerDataExtractor.exe"
+            "setupIcon": "./icon.ico",
+            "setupExe": "ProfilometerDataExtractor.exe",
+            "iconUrl": "https://raw.githubusercontent.com/electron/electron/master/default_app/icon.ico",
+            "loadingGif": ""
           }
         },
         {

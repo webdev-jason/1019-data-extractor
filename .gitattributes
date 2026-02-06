@@ -1,0 +1,7 @@
+# Hide formatting files from stats so Python/JS shine
+*.css linguist-vendored
+*.html linguist-vendored
+
+# Force detection
+*.js linguist-language=JavaScript
+*.py linguist-language=Python
