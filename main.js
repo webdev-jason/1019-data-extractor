@@ -10,7 +10,6 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    // NEW: Load the icon in the top-left corner of the window
     icon: path.join(__dirname, 'icon.ico'), 
     webPreferences: {
       preload: preloadPath,
@@ -56,16 +55,19 @@ ipcMain.handle('dialog:openFile', async () => {
 ipcMain.handle('run-analysis', async (event, filePaths) => {
   return new Promise((resolve, reject) => {
     
-    // --- PATH CONFIGURATION ---
-    let scriptPath = path.join(__dirname, 'calc.exe');
-    
-    // Fix path for production (unpacked folder)
+    // --- PATH CONFIGURATION (UPDATED FOR EXTRA_RESOURCE) ---
+    let scriptPath;
+
     if (app.isPackaged) {
-        scriptPath = scriptPath.replace('app.asar', 'app.asar.unpacked');
+        // In production, extraResources are placed in the process.resourcesPath
+        scriptPath = path.join(process.resourcesPath, 'calc.exe');
+    } else {
+        // In development, it is still sitting in the root directory
+        scriptPath = path.join(__dirname, 'calc.exe');
     }
 
     console.log("Looking for executable at:", scriptPath);
-    // -------------------------------
+    // -------------------------------------------------------
 
     console.log("Running analysis on files:", filePaths);
     
