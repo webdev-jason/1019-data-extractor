@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const { spawn } = require('child_process');
+const fs = require('fs'); // Core Concept: Node's native File System module
 
 let mainWindow;
 
@@ -52,50 +52,58 @@ ipcMain.handle('dialog:openFile', async () => {
   }
 });
 
+// NATIVE JAVASCRIPT PARSER
 ipcMain.handle('run-analysis', async (event, filePaths) => {
   return new Promise((resolve, reject) => {
-    
-    // --- PATH CONFIGURATION (UPDATED FOR EXTRA_RESOURCE) ---
-    let scriptPath;
+    try {
+      console.log("Starting native Node.js analysis on:", filePaths);
 
-    if (app.isPackaged) {
-        // In production, extraResources are placed in the process.resourcesPath
-        scriptPath = path.join(process.resourcesPath, 'calc.exe');
-    } else {
-        // In development, it is still sitting in the root directory
-        scriptPath = path.join(__dirname, 'calc.exe');
-    }
+      let totals = { Ra: 0, Rz: 0, Rmr: 0 };
+      let counts = { Ra: 0, Rz: 0, Rmr: 0 };
 
-    console.log("Looking for executable at:", scriptPath);
-    // -------------------------------------------------------
+      // Loop through each selected file
+      for (const filePath of filePaths) {
+        // Read the entire text file synchronously
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        
+        // Split the text into an array of individual lines
+        const lines = fileContent.split(/\r?\n/);
 
-    console.log("Running analysis on files:", filePaths);
-    
-    const childProcess = spawn(scriptPath, filePaths);
-
-    let resultData = '';
-
-    childProcess.stdout.on('data', (data) => {
-      resultData += data.toString();
-    });
-
-    childProcess.stderr.on('data', (data) => {
-      console.error(`Calc Error: ${data}`);
-    });
-
-    childProcess.on('close', (code) => {
-      console.log(`Process exited with code ${code}`);
-      if (code === 0) {
-        try {
-          const jsonResponse = JSON.parse(resultData);
-          resolve(jsonResponse);
-        } catch (e) {
-          console.error("JSON Parse Error:", e, "Raw Data:", resultData);
-          reject("Failed to parse response");
+        // Check each line for our target data
+        for (const line of lines) {
+          if (line.startsWith('Ra;')) {
+            // Split "Ra;0.162;um;;OK" by ";" and take the second item (index 1)
+            const val = parseFloat(line.split(';')[1]);
+            if (!isNaN(val)) { totals.Ra += val; counts.Ra++; }
+          } 
+          else if (line.startsWith('Rz;')) {
+            const val = parseFloat(line.split(';')[1]);
+            if (!isNaN(val)) { totals.Rz += val; counts.Rz++; }
+          } 
+          else if (line.startsWith('Rmr;')) {
+            const val = parseFloat(line.split(';')[1]);
+            if (!isNaN(val)) { totals.Rmr += val; counts.Rmr++; }
+          }
         }
-      } else {
-        reject(`Calculation process exited with code ${code}`);
       }
-    });
+
+      // Calculate Averages
+      const averages = {};
+      for (const key of ['Ra', 'Rz', 'Rmr']) {
+        if (counts[key] > 0) {
+          // Calculate, round to 3 decimal places, and ensure it remains a Number type
+          averages[key] = Number((totals[key] / counts[key]).toFixed(3));
+        } else {
+          averages[key] = "N/A";
+        }
+      }
+
+      console.log("Analysis Complete:", averages);
+      resolve(averages);
+
+    } catch (error) {
+      console.error("Native Analysis Error:", error);
+      reject("Failed to read or parse files natively.");
+    }
   });
 });
