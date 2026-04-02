@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const fs = require('fs'); // Core Concept: Node's native File System module
+const fs = require('fs');
 
 let mainWindow;
 
@@ -9,7 +9,7 @@ function createWindow() {
 
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 750, // Increased height to prevent outer scrollbar
     icon: path.join(__dirname, 'icon.ico'), 
     webPreferences: {
       preload: preloadPath,
@@ -48,7 +48,46 @@ ipcMain.handle('dialog:openFile', async () => {
   if (canceled) {
     return [];
   } else {
-    return filePaths;
+    const fileDetails = [];
+
+    for (const filePath of filePaths) {
+      const fileName = path.basename(filePath);
+      let dateVal = "Unknown";
+      let timeVal = "Unknown";
+
+      try {
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        const lines = fileContent.split(/\r?\n/);
+        
+        for (const line of lines) {
+          if (line.startsWith('Date;')) {
+            // Expected format: Date;03/31/2026,06:06:43
+            // We strip 'Date;', then split at the comma to separate date and time
+            const rawData = line.replace('Date;', '');
+            const parts = rawData.split(',');
+            
+            if (parts.length >= 2) {
+                dateVal = parts[0];
+                timeVal = parts[1];
+            } else {
+                dateVal = rawData; // Fallback if format is unexpected
+            }
+            break;
+          }
+        }
+      } catch (err) {
+        console.error(`Failed to read header for ${fileName}`, err);
+      }
+
+      fileDetails.push({
+        path: filePath,
+        name: fileName,
+        date: dateVal,
+        time: timeVal
+      });
+    }
+
+    return fileDetails;
   }
 });
 
@@ -61,18 +100,12 @@ ipcMain.handle('run-analysis', async (event, filePaths) => {
       let totals = { Ra: 0, Rz: 0, Rmr: 0 };
       let counts = { Ra: 0, Rz: 0, Rmr: 0 };
 
-      // Loop through each selected file
       for (const filePath of filePaths) {
-        // Read the entire text file synchronously
         const fileContent = fs.readFileSync(filePath, 'utf-8');
-        
-        // Split the text into an array of individual lines
         const lines = fileContent.split(/\r?\n/);
 
-        // Check each line for our target data
         for (const line of lines) {
           if (line.startsWith('Ra;')) {
-            // Split "Ra;0.162;um;;OK" by ";" and take the second item (index 1)
             const val = parseFloat(line.split(';')[1]);
             if (!isNaN(val)) { totals.Ra += val; counts.Ra++; }
           } 
@@ -87,11 +120,9 @@ ipcMain.handle('run-analysis', async (event, filePaths) => {
         }
       }
 
-      // Calculate Averages
       const averages = {};
       for (const key of ['Ra', 'Rz', 'Rmr']) {
         if (counts[key] > 0) {
-          // Calculate, round to 3 decimal places, and ensure it remains a Number type
           averages[key] = Number((totals[key] / counts[key]).toFixed(3));
         } else {
           averages[key] = "N/A";

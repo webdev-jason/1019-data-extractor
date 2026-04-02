@@ -14,7 +14,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    /* Using min-height and padding prevents outer scrollbars on normal screens */
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .container {
@@ -22,7 +25,7 @@ body {
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    width: 650px; /* Made slightly wider for the extra column */
+    width: 650px;
     text-align: center;
 }
 
@@ -31,15 +34,81 @@ h1 {
     color: var(--text-dark);
 }
 
-.button-group {
-    margin: 20px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
+.upload-section {
+    margin: 15px 0;
 }
 
-/* Main Buttons (Select / Analyze) */
+/* File List Styling */
+.file-list-container {
+    margin: 15px 0 20px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fafafa;
+    text-align: left;
+    max-height: 220px; 
+    overflow-y: auto;
+}
+
+.file-list-header {
+    display: flex;
+    padding: 8px 15px;
+    background: #e9ecef;
+    font-weight: bold;
+    font-size: 0.85rem;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+}
+
+#fileList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#fileList li {
+    display: flex;
+    padding: 8px 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+#fileList li:last-child {
+    border-bottom: none;
+}
+
+.col-name {
+    flex: 1; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 15px;
+}
+
+/* Specific formatting for the separated Date and Time */
+.col-date {
+    width: 90px;
+    color: #666;
+    text-align: center;
+}
+
+.col-time {
+    width: 80px; 
+    color: #666;
+    text-align: center;
+    margin-left: 15px; /* Creates the space between Date and Time */
+}
+
+.empty-msg {
+    justify-content: center !important;
+    color: #888 !important;
+    font-style: italic;
+    padding: 20px !important;
+}
+
+/* Main Buttons */
 button:not(.icon-btn) {
     padding: 10px 20px;
     font-size: 16px;
@@ -60,14 +129,13 @@ button:disabled {
     cursor: not-allowed;
 }
 
-#fileCount {
-    font-size: 0.9rem;
-    color: #666;
+#analyzeBtn {
+    width: 200px;
 }
 
 /* Table Styling */
 .table-container {
-    margin-top: 30px;
+    margin-top: 25px;
     display: flex;
     justify-content: center;
 }
@@ -95,13 +163,11 @@ td {
     vertical-align: middle;
 }
 
-/* Specific styling for the Action column */
 .action-col {
     width: 100px;
     background-color: #fff;
 }
 
-/* Copy Icon Button Styling */
 .icon-btn {
     background: none;
     border: none;
@@ -114,6 +180,7 @@ td {
     padding: 5px;
     border-radius: 4px;
     transition: all 0.2s ease;
+    width: 100%;
 }
 
 .icon-btn:hover {
@@ -131,10 +198,9 @@ td {
 
 .btn-text {
     font-size: 0.7rem;
-    font-family: 'Segoe UI', sans-serif; /* Reset font for text */
+    font-family: 'Segoe UI', sans-serif;
 }
 
-/* Animation class for when copy is successful */
 .copied {
     color: var(--success) !important;
 }

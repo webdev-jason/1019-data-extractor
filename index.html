@@ -12,18 +12,29 @@
         <h1>Surface Roughness Average</h1>
         <p>Select .txt files to analyze.</p>
 
-        <div class="button-group">
+        <div class="upload-section">
             <button id="uploadBtn">📂 Select Files</button>
-            <span id="fileCount">No files selected</span>
         </div>
 
-        <button id="analyzeBtn" disabled>Run Analysis</button>
+        <div class="file-list-container">
+            <div class="file-list-header">
+                <span class="col-name">File Name</span>
+                <span class="col-date">Date</span>
+                <span class="col-time">Time</span>
+            </div>
+            <ul id="fileList">
+                <li class="empty-msg">No files selected. Click 'Select Files' to begin.</li>
+            </ul>
+        </div>
+
+        <button id="analyzeBtn" disabled>⚙️ Run Analysis</button>
 
         <div class="table-container">
             <table id="resultsTable">
                 <thead>
                     <tr>
-                        <th class="action-col">Action</th> <th>Ra (µm)</th>
+                        <th class="action-col">Action</th>
+                        <th>Ra (µm)</th>
                         <th>Rz (µm)</th>
                         <th>Rmr (%)</th>
                     </tr>
