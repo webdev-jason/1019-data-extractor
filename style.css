@@ -14,10 +14,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Using min-height and padding prevents outer scrollbars on normal screens */
-    min-height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
+    height: 100vh;
+    overflow: hidden; 
 }
 
 .container {
@@ -87,18 +85,17 @@ h1 {
     padding-right: 15px;
 }
 
-/* Specific formatting for the separated Date and Time */
 .col-date {
-    width: 90px;
+    width: 95px;
     color: #666;
     text-align: center;
 }
 
 .col-time {
-    width: 80px; 
+    width: 85px; 
     color: #666;
     text-align: center;
-    margin-left: 15px; /* Creates the space between Date and Time */
+    margin-left: 10px; 
 }
 
 .empty-msg {
@@ -129,7 +126,8 @@ button:disabled {
     cursor: not-allowed;
 }
 
-#analyzeBtn {
+/* Make both main buttons the same exact width */
+#uploadBtn, #analyzeBtn {
     width: 200px;
 }
 

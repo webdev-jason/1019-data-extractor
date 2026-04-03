@@ -2,6 +2,12 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
+// NEW: Handle creating/removing shortcuts on Windows when installing/uninstalling.
+// This prevents the app from launching multiple times or "flashing" during first run.
+if (require('electron-squirrel-startup')) {
+  app.quit();
+}
+
 let mainWindow;
 
 function createWindow() {
@@ -9,7 +15,7 @@ function createWindow() {
 
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 750, // Increased height to prevent outer scrollbar
+    height: 750, 
     icon: path.join(__dirname, 'icon.ico'), 
     webPreferences: {
       preload: preloadPath,
@@ -53,7 +59,7 @@ ipcMain.handle('dialog:openFile', async () => {
     for (const filePath of filePaths) {
       const fileName = path.basename(filePath);
       let dateVal = "Unknown";
-      let timeVal = "Unknown";
+      let timeVal = "";
 
       try {
         const fileContent = fs.readFileSync(filePath, 'utf-8');
@@ -61,8 +67,6 @@ ipcMain.handle('dialog:openFile', async () => {
         
         for (const line of lines) {
           if (line.startsWith('Date;')) {
-            // Expected format: Date;03/31/2026,06:06:43
-            // We strip 'Date;', then split at the comma to separate date and time
             const rawData = line.replace('Date;', '');
             const parts = rawData.split(',');
             
@@ -70,7 +74,7 @@ ipcMain.handle('dialog:openFile', async () => {
                 dateVal = parts[0];
                 timeVal = parts[1];
             } else {
-                dateVal = rawData; // Fallback if format is unexpected
+                dateVal = rawData; 
             }
             break;
           }
@@ -91,7 +95,6 @@ ipcMain.handle('dialog:openFile', async () => {
   }
 });
 
-// NATIVE JAVASCRIPT PARSER
 ipcMain.handle('run-analysis', async (event, filePaths) => {
   return new Promise((resolve, reject) => {
     try {
