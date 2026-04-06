@@ -1,5 +1,6 @@
 {
-  "name": "data-extractor-1019",
+  "name": "surface-roughness-average",
+  "productName": "Surface Roughness Average",
   "version": "2.0.0",
   "description": "Extracts and averages Ra, Rz, and Rmr",
   "main": "main.js",
@@ -23,6 +24,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
+        "name": "Surface Roughness Average",
         "icon": "./icon"
       },
       "makers": [
@@ -32,10 +34,8 @@
             "name": "SurfaceRoughnessAverage",
             "setupIcon": "./icon.ico",
             "setupExe": "SurfaceRoughnessAverage.exe",
-            "iconUrl": "https://raw.githubusercontent.com/electron/electron/master/default_app/icon.ico",
-            "loadingGif": "",
-            "createDesktopShortcut": false,
-            "createStartMenuShortcut": false
+            "iconUrl": "https://raw.githubusercontent.com/webdev-jason/1019-data-extractor/main/icon.ico",
+            "loadingGif": ""
           }
         },
         {
