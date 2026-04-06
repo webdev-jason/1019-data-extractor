@@ -33,7 +33,9 @@
             "setupIcon": "./icon.ico",
             "setupExe": "SurfaceRoughnessAverage.exe",
             "iconUrl": "https://raw.githubusercontent.com/electron/electron/master/default_app/icon.ico",
-            "loadingGif": ""
+            "loadingGif": "",
+            "createDesktopShortcut": false,
+            "createStartMenuShortcut": false
           }
         },
         {
